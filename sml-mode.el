@@ -527,7 +527,6 @@ Regexp match data 0 points to the chars."
     (`(:elem . args)  sml-indent-args)
     (`(:list-intro . "fn") t)
     (`(:close-all . ,_) t)
-    (`(:after . "struct") 0)
     (`(:after . "=>") (if (smie-rule-hanging-p) 0 2))
     (`(:after . "in") (if (smie-rule-parent-p "local") 0))
     (`(:after . "of") 3)
@@ -562,10 +561,11 @@ Regexp match data 0 points to the chars."
     (`(:before . "d=")
      (cond
       ((smie-rule-parent-p "datatype") (if (smie-rule-bolp) 2))
-      ((smie-rule-parent-p "structure" "signature" "functor") 0)))
+      ((smie-rule-parent-p "structure" "signature" "functor") sml-indent-level)))
     ;; Indent an expression starting with "local" as if it were starting
     ;; with "fun".
     (`(:before . "local") (smie-indent-keyword "fun"))
+    (`(:before . ":") sml-indent-level)
     ;; FIXME: type/val/fun/... are separators but "local" is not, even though
     ;; it appears in the same list.  Try to fix up the problem by hand.
     ;; ((or (equal token "local")
