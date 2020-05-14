@@ -561,7 +561,7 @@ Regexp match data 0 points to the chars."
     (`(:before . "d=")
      (cond
       ((smie-rule-parent-p "datatype") (if (smie-rule-bolp) 2))
-      ((smie-rule-parent-p "structure" "signature" "functor") sml-indent-level)))
+      ((smie-rule-parent-p "structure" "signature" "functor") 0)))
     ;; Indent an expression starting with "local" as if it were starting
     ;; with "fun".
     (`(:before . "local") (smie-indent-keyword "fun"))
