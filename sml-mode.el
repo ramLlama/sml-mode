@@ -237,7 +237,7 @@ notion of \"the end of an outline\".")
 
 (defconst sml-starters-syms
   (append sml-module-head-syms
-	  '("abstype" "datatype" "exception" "fun"
+	  '("abstype" "datatype" "do" "exception" "fun"
 	    "local" "infix" "infixr" "sharing" "nonfix"
 	    "open" "type" "val" "and"
 	    "withtype" "with"))
@@ -460,7 +460,8 @@ Regexp match data 0 points to the chars."
               (decls "sharing" decls)
               (decls "exception" decls)
               (decls "fun" decls)
-              (decls "val" decls))
+              (decls "val" decls)
+              (decls "do" exp))
        (type (type "->" type)
              (type "*" type))
        (funbranches (sexp "d=" exp))
@@ -476,8 +477,8 @@ Regexp match data 0 points to the chars."
      '((nonassoc "of") (assoc "|"))     ; "case a of b => case c of d => e | f"
      '((nonassoc "handle") (assoc "|")) ; Idem for "handle".
      '((assoc "->") (assoc "*"))
-     '((assoc "val" "fun" "type" "datatype" "abstype" "open" "infix" "infixr"
-              "nonfix" "functor" "signature" "structure" "exception"
+     '((assoc "do" "val" "fun" "type" "datatype" "abstype" "open" "infix"
+              "infixr" "nonfix" "functor" "signature" "structure" "exception"
               "include" "sharing" "local")
        (assoc "withtype")
        (assoc "and"))
