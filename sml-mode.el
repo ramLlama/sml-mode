@@ -566,7 +566,10 @@ Regexp match data 0 points to the chars."
     ;; Indent an expression starting with "local" as if it were starting
     ;; with "fun".
     (`(:before . "local") (smie-indent-keyword "fun"))
-    (`(:before . ":") sml-indent-level)
+    (`(:before . ":")
+     (cond
+      ((smie-rule-parent-p "val") (if (smie-rule-bolp) 2))
+      ((smie-rule-parent-p "structure" "signature" "functor") 0)))
     ;; FIXME: type/val/fun/... are separators but "local" is not, even though
     ;; it appears in the same list.  Try to fix up the problem by hand.
     ;; ((or (equal token "local")
