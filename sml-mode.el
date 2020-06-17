@@ -419,6 +419,7 @@ Regexp match data 0 points to the chars."
     (smie-bnf->prec2
      '((exp ("if" exp "then" exp "else" exp)
             ("case" exp "of" branches)
+            ("case" exp "of" "|" branches)
             ("let" decls "in" cmds "end")
             ("struct" decls "end")
             ("sig" decls "end")
@@ -432,7 +433,8 @@ Regexp match data 0 points to the chars."
              (sexp "andalso" sexp))
        (cmds (cmds ";" cmds) (exp))
        (exps (exps "," exps) (exp))     ; (exps ";" exps)
-       (branches (sexp "=>" exp) (branches "|" branches))
+       (branch (sexp "=>" exp) (sexp "|" branch))
+       (branches (branch) (branches "|" branches))
        ;; Operator precedence grammars handle separators much better then
        ;; starters/terminators, so let's pretend that let/fun are separators.
        (decls (sexp "d=" exp)
@@ -536,11 +538,17 @@ Regexp match data 0 points to the chars."
     (`(:after . ,(or `"|" `"d|" `";" `",")) (smie-rule-separator kind))
     (`(:after . "d=")
      (if (and (smie-rule-parent-p "val") (smie-rule-next-p "fn")) -3))
-    (`(:before . "=>") (if (smie-rule-parent-p "fn") 3))
+    (`(:before . "=>") (cond
+                        ((smie-rule-parent-p "fn") 3)  ;; lambda function
+                        (t (smie-rule-parent -1))))    ;; case expression
     (`(:before . "of") 1)
     ;; FIXME: pcase in Emacs<24.4 bumps into a bug if we do this:
     ;;(`(:before . ,(and `"|" (guard (smie-rule-prev-p "of")))) 1)
     (`(:before . "|") (if (smie-rule-prev-p "of") 1 (smie-rule-separator kind)))
+    (`(:before . "d|") (cond
+                        ((smie-rule-prev-p "of") 1)         ;; first or-pat case expression
+                        ((smie-rule-parent-p "d=" "d|") 0)  ;; datatype
+                        (t (smie-rule-parent 1))))          ;; non-first or-pat case expression
     (`(:before . ,(or `"|" `"d|" `";" `",")) (smie-rule-separator kind))
     ;; Treat purely syntactic block-constructs as being part of their parent,
     ;; when the opening statement is hanging.
@@ -621,6 +629,8 @@ Assumes point is right before the \"of\" symbol."
 (defun sml-smie-datatype-|-p ()
   "Figure out which kind of \"|\" this is.
 Assumes point is right before the | symbol."
+  ;; Unfortunately, the current lexer doesn't have a good way to check for case or-pat "|" symbols,
+  ;; so such symbols are detected as "d|" and treated accordingly in the indentation rules.
   (save-excursion
     (forward-char 1)                    ;Skip the |.
     (let ((after-type-def
