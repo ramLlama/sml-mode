@@ -142,7 +142,7 @@ If nil:					If t:
 	and b = B				     and b = B"
   :type 'boolean)
 
-(defcustom sml-electric-pipe-mode t
+(defcustom sml-electric-pipe-mode nil
   "If non-nil, automatically insert appropriate template when hitting |."
   :type 'boolean)
 
