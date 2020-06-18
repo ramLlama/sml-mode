@@ -639,7 +639,7 @@ Assumes point is right before the | symbol."
     (let ((after-type-def
            '("|" "of" "in" "datatype" "and" "exception" "abstype" "infix"
              "infixr" "nonfix" "local" "val" "fun" "structure" "functor"
-             "signature")))
+             "signature" "end")))
       (or (member (sml-smie-forward-token-1) after-type-def) ;Skip the tag.
           (member (sml-smie-forward-token-1) after-type-def)))))
 
