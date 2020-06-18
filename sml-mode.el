@@ -530,7 +530,9 @@ Regexp match data 0 points to the chars."
     (`(:elem . args)  sml-indent-args)
     (`(:list-intro . "fn") t)
     (`(:close-all . ,_) t)
-    (`(:after . "=>") (if (smie-rule-hanging-p) 0 2))
+    (`(:after . "=>") (cond
+                       ((smie-rule-hanging-p) (if (smie-rule-parent-p "fn") 0 3))
+                       (t 2)))
     (`(:after . "in") (if (smie-rule-parent-p "local") 0))
     (`(:after . "of") 3)
     (`(:after . ,(or `"(" `"{" `"[")) (if (not (smie-rule-hanging-p)) 2))
@@ -539,8 +541,9 @@ Regexp match data 0 points to the chars."
     (`(:after . "d=")
      (if (and (smie-rule-parent-p "val") (smie-rule-next-p "fn")) -3))
     (`(:before . "=>") (cond
-                        ((smie-rule-parent-p "fn") 3)  ;; lambda function
-                        (t (smie-rule-parent -1))))    ;; case expression
+                        ((smie-rule-parent-p "fn") 3)                        ;; lambda function
+                        ((smie-rule-parent-p "of") (smie-rule-parent))       ;; non-barred case rule
+                        ((smie-rule-parent-p "|")  (smie-rule-parent -1))))  ;; barred case rule
     (`(:before . "of") 1)
     ;; FIXME: pcase in Emacs<24.4 bumps into a bug if we do this:
     ;;(`(:before . ,(and `"|" (guard (smie-rule-prev-p "of")))) 1)
