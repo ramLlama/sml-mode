@@ -547,9 +547,11 @@ Regexp match data 0 points to the chars."
     (`(:before . "of") 1)
     ;; FIXME: pcase in Emacs<24.4 bumps into a bug if we do this:
     ;;(`(:before . ,(and `"|" (guard (smie-rule-prev-p "of")))) 1)
-    (`(:before . "|") (if (smie-rule-prev-p "of") 1 (smie-rule-separator kind)))
+    (`(:before . "|") (cond
+                       ((smie-rule-parent-p "of") 1)
+                       (t (smie-rule-separator kind))))
     (`(:before . "d|") (cond
-                        ((smie-rule-prev-p "of") 1)         ;; first or-pat case expression
+                        ((smie-rule-parent-p "of") 1)       ;; first or-pat case expression
                         ((smie-rule-parent-p "d=" "d|") 0)  ;; datatype
                         (t (smie-rule-parent 1))))          ;; non-first or-pat case expression
     (`(:before . ,(or `"|" `"d|" `";" `",")) (smie-rule-separator kind))
