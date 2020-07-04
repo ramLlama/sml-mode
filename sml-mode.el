@@ -463,7 +463,8 @@ Regexp match data 0 points to the chars."
               (decls "exception" decls)
               (decls "fun" decls)
               (decls "val" decls)
-              (decls "do" exp))
+              (decls "do" exp)
+              (decls "where" decls))
        (type (type "->" type)
              (type "*" type))
        (funbranches (sexp "d=" exp))
@@ -479,7 +480,7 @@ Regexp match data 0 points to the chars."
      '((nonassoc "of") (assoc "|"))     ; "case a of b => case c of d => e | f"
      '((nonassoc "handle") (assoc "|")) ; Idem for "handle".
      '((assoc "->") (assoc "*"))
-     '((assoc "do" "val" "fun" "type" "datatype" "abstype" "open" "infix"
+     '((assoc "where" "do" "val" "fun" "type" "datatype" "abstype" "open" "infix"
               "infixr" "nonfix" "functor" "signature" "structure" "exception"
               "include" "sharing" "local")
        (assoc "withtype")
