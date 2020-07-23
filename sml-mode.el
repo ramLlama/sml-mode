@@ -532,7 +532,7 @@ Regexp match data 0 points to the chars."
     (`(:list-intro . "fn") t)
     (`(:close-all . ,_) t)
     (`(:after . "=>") (cond
-                       ((smie-rule-hanging-p) (if (smie-rule-parent-p "fn") 0 3))
+                       ((smie-rule-hanging-p) (if (smie-rule-parent-p "fn") 0 (+ sml-indent-level 3)))
                        (t 2)))
     (`(:after . "in") (if (smie-rule-parent-p "local") 0))
     (`(:after . "of") 3)
