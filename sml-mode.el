@@ -584,6 +584,8 @@ Regexp match data 0 points to the chars."
      (cond
       ((smie-rule-parent-p "val") (if (smie-rule-bolp) 2))
       ((smie-rule-parent-p "structure" "signature" "functor") 0)))
+    (`(:before . "struct") 0)
+    (`(:before . "where") -6)
     ;; FIXME: type/val/fun/... are separators but "local" is not, even though
     ;; it appears in the same list.  Try to fix up the problem by hand.
     ;; ((or (equal token "local")
