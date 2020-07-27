@@ -552,9 +552,14 @@ Regexp match data 0 points to the chars."
                        ((smie-rule-parent-p "of") 1)
                        (t (smie-rule-separator kind))))
     (`(:before . "d|") (cond
-                        ((smie-rule-parent-p "of") 1)       ;; first or-pat case expression
-                        ((smie-rule-parent-p "d=" "d|") 0)  ;; datatype
-                        (t (smie-rule-parent 1))))          ;; non-first or-pat case expression
+                        ;; first or-pat case expression
+                        ((smie-rule-parent-p "of") 1)
+                        ;; datatype
+                        ((smie-rule-parent-p "d=" "d|") 0)
+                        ;; non-first or-pat case expression
+                        ((smie-rule-parent-p "=>") (smie-rule-parent 1))
+                        ;; non-first or-pat case expression with nested parent
+                        (t (smie-rule-parent -4))))
     (`(:before . ,(or `"|" `"d|" `";" `",")) (smie-rule-separator kind))
     ;; Treat purely syntactic block-constructs as being part of their parent,
     ;; when the opening statement is hanging.
