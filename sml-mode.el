@@ -555,12 +555,13 @@ Regexp match data 0 points to the chars."
                         ;; first or-pat case expression
                         ((smie-rule-parent-p "of") 1)
                         ;; datatype
-                        ((smie-rule-parent-p "d=" "d|") 0)
+                        ((smie-rule-parent-p "d=") 0)
+                        ((smie-rule-parent-p "d|") (smie-rule-separator kind))
                         ;; non-first or-pat case expression
                         ((smie-rule-parent-p "=>") (smie-rule-parent 1))
                         ;; non-first or-pat case expression with nested parent
                         (t (smie-rule-parent -4))))
-    (`(:before . ,(or `"|" `"d|" `";" `",")) (smie-rule-separator kind))
+    (`(:before . ,(or `"|" `";" `",")) (smie-rule-separator kind))
     ;; Treat purely syntactic block-constructs as being part of their parent,
     ;; when the opening statement is hanging.
     (`(:before . ,(or `"let" `"(" `"[" `"{")) ; "struct"? "sig"?
