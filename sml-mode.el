@@ -1348,8 +1348,8 @@ See also (info \"(sml-mode)Top\").
   (set (make-local-variable 'parse-sexp-ignore-comments) t)
   (set (make-local-variable 'comment-start) "(* ")
   (set (make-local-variable 'comment-end) " *)")
-  (set (make-local-variable 'comment-start-skip) "(\\*+\\s-*")
-  (set (make-local-variable 'comment-end-skip) "\\s-*\\*+)")
+  (set (make-local-variable 'comment-start-skip) "\\(?:(\\*+\\s-*\\|//+\\s-*\\)")
+  (set (make-local-variable 'comment-end-skip) "\\(?:\\s-*\\*+)\\|\\s-*\n\\)")
   ;; No need to quote nested comments markers.
   (set (make-local-variable 'comment-quote-nested) nil))
 
