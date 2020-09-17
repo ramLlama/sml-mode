@@ -594,6 +594,9 @@ Regexp match data 0 points to the chars."
      (cond
       ((smie-rule-parent-p "val") (if (smie-rule-bolp) 2))
       ((smie-rule-parent-p "structure" "signature" "functor") 0)))
+    (`(:before . ":>")
+     (cond
+      ((smie-rule-parent-p "structure" "signature" "functor") 0)))
     (`(:before . "where") (cond
                            ((smie-rule-parent-p "type") -6)
                            (t nil)))
