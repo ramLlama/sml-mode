@@ -536,7 +536,7 @@ Regexp match data 0 points to the chars."
     (`(:list-intro . "fn") t)
     (`(:close-all . ,_) t)
     (`(:after . "=>") (cond
-                       ((smie-rule-hanging-p) (if (smie-rule-parent-p "fn") 0 (+ sml-indent-level 3)))
+                       ((smie-rule-hanging-p) (if (smie-rule-parent-p "fn") 0 sml-indent-level))
                        (t 2)))
     (`(:after . "in") (if (smie-rule-parent-p "local") 0))
     (`(:after . "of") 3)
@@ -545,10 +545,11 @@ Regexp match data 0 points to the chars."
     (`(:after . ,(or `"|" `"d|" `";" `",")) (smie-rule-separator kind))
     (`(:after . "d=")
      (if (and (smie-rule-parent-p "val") (smie-rule-next-p "fn")) -3))
+    (`(:after . "let") sml-indent-level)
     (`(:before . "=>") (cond
-                        ((smie-rule-parent-p "fn") 3)                        ;; lambda function
-                        ((smie-rule-parent-p "of") (smie-rule-parent))       ;; non-barred case rule
-                        ((smie-rule-parent-p "|")  (smie-rule-parent -1))))  ;; barred case rule
+                        ((smie-rule-parent-p "fn") 3)                       ;; lambda function
+                        ((smie-rule-parent-p "of") (smie-rule-parent 3))    ;; non-barred case rulep
+                        ((smie-rule-parent-p "|")  (smie-rule-parent 2))))  ;; barred case rule
     (`(:before . "of") 1)
     ;; FIXME: pcase in Emacs<24.4 bumps into a bug if we do this:
     ;;(`(:before . ,(and `"|" (guard (smie-rule-prev-p "of")))) 1)
@@ -566,10 +567,18 @@ Regexp match data 0 points to the chars."
                         ;; non-first or-pat case expression with nested parent
                         (t (smie-rule-parent -4))))
     (`(:before . ,(or `"|" `";" `",")) (smie-rule-separator kind))
-    ;; Treat purely syntactic block-constructs as being part of their parent,
-    ;; when the opening statement is hanging.
-    (`(:before . ,(or `"let" `"(" `"[" `"{")) ; "struct"? "sig"?
-     (if (smie-rule-hanging-p) (smie-rule-parent)))
+    ;; Treat purely syntactic block-constructs similar to C when hanging.
+    (`(:before . ,(or `"(" `"[" `"{")) ; "struct"? "sig"?
+     (if (smie-rule-hanging-p) (smie-rule-parent 1)))
+    ;; let's are weird.
+    (`(:before . "let")
+     (cond
+      ((smie-rule-hanging-p) (cond
+                              ((smie-rule-parent-p "if") nil)
+                              ((smie-rule-prev-p "=>") (+ (smie-indent-keyword "=>")
+                                                          sml-indent-level))
+                              (t (smie-rule-parent 1))))
+      ((smie-rule-parent-p "(") (smie-rule-parent 1))))
     ;; Treat if ... else if ... as a single long syntactic construct.
     ;; Similarly, treat fn a => fn b => ... as a single construct.
     (`(:before . ,(or `"if" `"fn"))
